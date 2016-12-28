@@ -1,4 +1,4 @@
-#
+# jinchen : redirect STDOUT when start supervisor and don't set back to null
 # Fluentd
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
@@ -138,8 +138,12 @@ module Fluent
       @main_pid = nil
     end
 
+    def redirect_stdout
+      STDOUT.reopen("/home/td-agent/log/td-agent.log", "a")
+    end
+
     def start
-      STDOUT.reopen("/home/work/app/portal/import/jctest.log", "a")
+      redirect_stdout
       @log.init
       show_plugin_config if @show_plugin_config
       read_config
@@ -342,7 +346,7 @@ module Fluent
 
       if @daemonize && @wait_daemonize_pipe_w
         STDIN.reopen("/dev/null")
-        STDOUT.reopen("/dev/null", "w")
+        #STDOUT.reopen("/dev/null", "w")
         STDERR.reopen("/dev/null", "w")
         @wait_daemonize_pipe_w.close
         @wait_daemonize_pipe_w = nil
